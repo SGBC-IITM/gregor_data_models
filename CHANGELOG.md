@@ -13,7 +13,6 @@
 |aligned_iclr                |NA                          |added table                                                             |
 |aligned_iclr_set            |NA                          |added table                                                             |
 |called_variants_iclr        |NA                          |added table                                                             |
-|experiment_rna_short_read   |experiment_type             |added enumerated value 'long read'                                      |
 
 
 ## 1.10.1 
