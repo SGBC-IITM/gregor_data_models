@@ -1,7 +1,7 @@
 {
   "name": "GREGoR Data Model",
   "description": "Data model for the GREGoR consortium",
-  "version": "1.11",
+  "version": "1.11.1",
   "tables": [
     {
       "table": "participant",
@@ -743,7 +743,7 @@
           "column": "table_name",
           "required": true,
           "data_type": "enumeration",
-          "enumerations": ["experiment_dna_short_read", "experiment_rna_short_read", "experiment_nanopore", "experiment_pac_bio", "experiment_atac_short_read"],
+          "enumerations": ["experiment_dna_short_read", "experiment_rna_short_read", "experiment_nanopore", "experiment_pac_bio", "experiment_atac_short_read", "experiment_optical_mapping", "experiment_iclr"],
           "examples": "experiment_dna_short_read"
         },
         {
@@ -776,7 +776,7 @@
           "column": "table_name",
           "required": true,
           "data_type": "enumeration",
-          "enumerations": ["aligned_dna_short_read", "aligned_rna_short_read", "aligned_nanopore", "aligned_pac_bio", "aligned_atac_short_read"],
+          "enumerations": ["aligned_dna_short_read", "aligned_rna_short_read", "aligned_nanopore", "aligned_pac_bio", "aligned_atac_short_read", "aligned_iclr"],
           "examples": "aligned_dna_short_read"
         },
         {
