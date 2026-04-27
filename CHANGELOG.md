@@ -2,12 +2,12 @@
 
 ## 1.11.1 
 
-|Table      |Field      |Change notes                                      |
-|:----------|:----------|:-------------------------------------------------|
-|experiment |table_name |add enumerated value 'experiment_optical_mapping' |
-|experiment |table_name |add enumerated value 'experiment_iclr'            |
-|aligned    |table_name |add enumerated value 'aligned_optical_mapping'    |
-|aligned    |table_name |add enumerated value 'aligned_iclr'               |
+|Table      |Field      |Change notes                                             |
+|:----------|:----------|:--------------------------------------------------------|
+|experiment |table_name |add enumerated value 'experiment_optical_mapping'        |
+|experiment |table_name |add enumerated value 'experiment_iclr'                   |
+|aligned    |table_name |add enumerated value 'aligned_molecules_optical_mapping' |
+|aligned    |table_name |add enumerated value 'aligned_iclr'                      |
 
 
 ## 1.11 
