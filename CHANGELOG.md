@@ -1,5 +1,16 @@
 # Change log
 
+## 1.12 
+
+|Table                          |Field         |Change notes                            |
+|:------------------------------|:-------------|:---------------------------------------|
+|genetic_findings               |variant_type  |removed enumerated values CNV, MEI, STR |
+|called_variants_dna_short_read |variant_types |removed enumerated values CNV, MEI, STR |
+|called_variants_nanopore       |variant_types |removed enumerated values CNV, MEI, STR |
+|called_variants_pac_bio        |variant_types |removed enumerated values CNV, MEI, STR |
+|called_variants_iclr           |variant_types |removed enumerated values CNV, MEI, STR |
+
+
 ## 1.11.1 
 
 |Table      |Field      |Change notes                                             |
