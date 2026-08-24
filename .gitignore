@@ -1,1 +1,4 @@
 json_schemas/v1.9/
+gregor_project/.venv
+gregor_project/gregor_app/__pycache__
+gregor_project/gregor_project/__pycache__
