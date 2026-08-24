@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django import forms
+from django.apps import apps
+from django.urls import reverse
 from django.db import models
 
 from . import models as app_models
@@ -56,6 +59,45 @@ class InspectDBAdmin(admin.ModelAdmin):
         return ()
 
 
+class KeyValuesForm(forms.ModelForm):
+    class Media:
+        js = ("gregor_app/key_values_admin.js",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        table_names = sorted(
+            {
+                model._meta.db_table
+                for model in apps.get_models()
+                if getattr(model._meta, "db_table", None) and model._meta.db_table != "key_values"
+            }
+        )
+        if "table_name" in self.fields:
+            self.fields["table_name"].widget = forms.Select(
+                choices=[("", "---------")] + [(name, name) for name in table_names]
+            )
+        if "column_name" in self.fields:
+            self.fields["column_name"].widget = forms.Select(choices=[("", "---------")])
+
+
+class KeyValuesAdmin(admin.ModelAdmin):
+    form = KeyValuesForm
+    list_display = ("table_name", "column_name", "key_value")
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj is None:
+            return ()
+        return tuple(field.name for field in self.model._meta.fields)
+
+    def has_change_permission(self, request, obj=None):
+        if obj is None:
+            return True
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 def register_model(model):
     """Register inspectdb-generated models with a generic admin class."""
     if model._meta.abstract or model._meta.proxy:
@@ -69,6 +111,27 @@ def register_model(model):
     return model
 
 
+def _get_model_for_table(table_name):
+    for model in apps.get_models():
+        if getattr(model._meta, "db_table", None) == table_name:
+            return model
+    return None
+
+
+key_values_model = None
 for _model in app_models.__dict__.values():
     if isinstance(_model, type) and issubclass(_model, models.Model) and _model is not models.Model:
-        register_model(_model)
+        if getattr(_model._meta, "db_table", None) == "key_values":
+            key_values_model = _model
+            break
+
+
+for _model in app_models.__dict__.values():
+    if isinstance(_model, type) and issubclass(_model, models.Model) and _model is not models.Model:
+        if _model is key_values_model:
+            try:
+                admin.site.register(_model, KeyValuesAdmin)
+            except admin.sites.AlreadyRegistered:
+                pass
+        else:
+            register_model(_model)

@@ -18,6 +18,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from gregor_app.views import key_values_columns
+
 urlpatterns = [
+    path("admin/key-values-columns/", key_values_columns, name="key_values_columns"),
     path("admin/", admin.site.urls),
 ]
