@@ -1373,7 +1373,7 @@
           "examples": "0"
         },
         {
-          "column": "5prime3prime_bias",
+          "column": "five_prime_three_prime_bias",
           "description": "The ratio of the 5’ bias and the 3’ bias (5' bias is the ratio between mean coverage at the 5’ region (first 100bp) and the whole transcript, and 3' bias is the ratio between mean coverage at the 3’ region (last 100bp) and the whole transcript.)",
           "data_type": "float",
           "examples": "1.09"

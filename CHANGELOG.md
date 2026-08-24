@@ -121,7 +121,7 @@
 |experiment_rna_short_read    |percent_mtRNA       |move to aligned_rna_short_read table                                      |
 |experiment_rna_short_read    |percent_Globin      |move to aligned_rna_short_read table                                      |
 |experiment_rna_short_read    |percent_UMI         |move to aligned_rna_short_read table                                      |
-|experiment_rna_short_read    |5prime3prime_bias   |move to aligned_rna_short_read table                                      |
+|experiment_rna_short_read    |five_prime_three_prime_bias|move to aligned_rna_short_read table                                      |
 |experiment_rna_short_read    |percent_GC          |move to aligned_rna_short_read table                                      |
 |experiment_rna_short_read    |percent_chrX_Y      |move to aligned_rna_short_read table                                      |
 |aligned_rna_short_read table |percent_rRNA        |added as optional field                                                   |
@@ -129,7 +129,7 @@
 |aligned_rna_short_read table |percent_mtRNA       |added as optional field                                                   |
 |aligned_rna_short_read table |percent_Globin      |added as optional field                                                   |
 |aligned_rna_short_read table |percent_UMI         |added as optional field                                                   |
-|aligned_rna_short_read table |5prime3prime_bias   |added as optional field                                                   |
+|aligned_rna_short_read table |five_prime_three_prime_bias|added as optional field                                                   |
 |aligned_rna_short_read table |percent_GC          |added as optional field                                                   |
 |aligned_rna_short_read table |percent_chrX_Y      |added as optional field                                                   |
 |aligned_rna_short_read_set   |all                 |table added                                                               |
@@ -315,5 +315,4 @@
 |experiment_rna_short_read |all                        |table added                                                                                                                                 |
 |all                       |enumerated fields          |required fields cannot have missing values; optional fields can have missing or blank values and do not have 'Unknown' as a separate option |
 |participant               |affected_status            |made required                                                                                                                               |
-
 

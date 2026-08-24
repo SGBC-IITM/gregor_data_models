@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +21,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-gffo7)dtko@w10vojqj2(dksiu3yy%j^(=(v5!skkij0a&n$=q"
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-gffo7)dtko@w10vojqj2(dksiu3yy%j^(=(v5!skkij0a&n$=q",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0")
+    .split(",")
+    if host.strip()
+]
 
 
 # Application definition
@@ -75,8 +84,15 @@ WSGI_APPLICATION = "gregor_project.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.environ.get("DJANGO_DB_NAME", "gregor"),
+        "USER": os.environ.get("DJANGO_DB_USER", "gregor"),
+        "PASSWORD": os.environ.get("DJANGO_DB_PASSWORD", "gregor"),
+        "HOST": os.environ.get("DJANGO_DB_HOST", "db"),
+        "PORT": os.environ.get("DJANGO_DB_PORT", "3306"),
+        "OPTIONS": {
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
