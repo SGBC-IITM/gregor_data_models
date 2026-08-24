@@ -1,5 +1,6 @@
 CREATE TABLE `participant` (
-  `participant_id` string PRIMARY KEY COMMENT 'Subject/Participant Identifier (primary key)',
+  `participant_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated participant key',
+  `participant_id` string UNIQUE COMMENT 'Subject/Participant Identifier (unique external identifier)',
   `internal_project_id` string COMMENT 'An identifier used by GREGoR research centers to identify a set of participants for their internal tracking',
   `gregor_center` enumeration COMMENT 'GREGoR Center to which the participant is originally associated',
   `consent_code` enumeration COMMENT 'Consent group pertaining to this participant''s data',
@@ -26,8 +27,75 @@ CREATE TABLE `participant` (
   `missing_variant_details` string COMMENT 'For missing variant cases, indicate gene(s) or region of interest and reason for inclusion in MVP.'
 );
 
+CREATE TABLE `key_values` (
+  `key_value_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated key for a controlled value',
+  `table_name` string COMMENT 'Table containing the controlled column',
+  `column_name` string COMMENT 'Controlled column name',
+  `key_value` string COMMENT 'Allowed controlled value',
+  UNIQUE (`table_name`, `column_name`, `key_value`)
+);
+
+INSERT INTO `key_values` (`table_name`, `column_name`, `key_value`) VALUES
+  ('participant', 'gregor_center', 'BCM'),
+  ('participant', 'gregor_center', 'BROAD'),
+  ('participant', 'gregor_center', 'CNH_I'),
+  ('participant', 'gregor_center', 'UCI'),
+  ('participant', 'gregor_center', 'UW_CRDR'),
+  ('participant', 'gregor_center', 'GSS'),
+  ('participant', 'gregor_center', 'UW_DCC'),
+  ('participant', 'gregor_center', 'ILMN-IHOPE'),
+  ('participant', 'consent_code', 'GRU'),
+  ('participant', 'consent_code', 'HMB'),
+  ('participant', 'recontactable', 'Yes'),
+  ('participant', 'recontactable', 'No'),
+  ('participant', 'proband_relationship', 'Self'),
+  ('participant', 'proband_relationship', 'Mother'),
+  ('participant', 'proband_relationship', 'Father'),
+  ('participant', 'proband_relationship', 'Sibling'),
+  ('participant', 'proband_relationship', 'Child'),
+  ('participant', 'proband_relationship', 'Maternal Half Sibling'),
+  ('participant', 'proband_relationship', 'Paternal Half Sibling'),
+  ('participant', 'proband_relationship', 'Maternal Grandmother'),
+  ('participant', 'proband_relationship', 'Maternal Grandfather'),
+  ('participant', 'proband_relationship', 'Paternal Grandmother'),
+  ('participant', 'proband_relationship', 'Paternal Grandfather'),
+  ('participant', 'proband_relationship', 'Maternal Aunt'),
+  ('participant', 'proband_relationship', 'Maternal Uncle'),
+  ('participant', 'proband_relationship', 'Paternal Aunt'),
+  ('participant', 'proband_relationship', 'Paternal Uncle'),
+  ('participant', 'proband_relationship', 'Niece'),
+  ('participant', 'proband_relationship', 'Nephew'),
+  ('participant', 'proband_relationship', 'Maternal 1st Cousin'),
+  ('participant', 'proband_relationship', 'Paternal 1st Cousin'),
+  ('participant', 'proband_relationship', 'Other'),
+  ('participant', 'proband_relationship', 'Unknown'),
+  ('participant', 'sex', 'Female'),
+  ('participant', 'sex', 'Male'),
+  ('participant', 'sex', 'Unknown'),
+  ('participant', 'reported_race', 'American Indian or Alaska Native'),
+  ('participant', 'reported_race', 'Asian'),
+  ('participant', 'reported_race', 'Black or African American'),
+  ('participant', 'reported_race', 'Native Hawaiian or Other Pacific Islander'),
+  ('participant', 'reported_race', 'Middle Eastern or North African'),
+  ('participant', 'reported_race', 'White'),
+  ('participant', 'reported_ethnicity', 'Hispanic or Latino'),
+  ('participant', 'reported_ethnicity', 'Not Hispanic or Latino'),
+  ('participant', 'affected_status', 'Affected'),
+  ('participant', 'affected_status', 'Unaffected'),
+  ('participant', 'affected_status', 'Possibly affected'),
+  ('participant', 'affected_status', 'Unknown'),
+  ('participant', 'solve_status', 'Solved'),
+  ('participant', 'solve_status', 'Partially solved'),
+  ('participant', 'solve_status', 'Probably solved'),
+  ('participant', 'solve_status', 'Unsolved'),
+  ('participant', 'solve_status', 'Unaffected'),
+  ('participant', 'missing_variant_case', 'Yes'),
+  ('participant', 'missing_variant_case', 'No'),
+  ('participant', 'missing_variant_case', 'Unknown');
+
 CREATE TABLE `family` (
-  `family_id` string PRIMARY KEY COMMENT 'Identifier for family (primary key)',
+  `family_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated family key',
+  `family_id` string UNIQUE COMMENT 'Identifier for family (unique external identifier)',
   `consanguinity` enumeration COMMENT 'Indicate if consanguinity is present or suspected within a family',
   `consanguinity_detail` string COMMENT 'Free text description of any additional consanguinity details',
   `pedigree_file` string COMMENT 'name of file (renamed from pedigree_image because it can contain a PED file or image)',
@@ -36,7 +104,8 @@ CREATE TABLE `family` (
 );
 
 CREATE TABLE `phenotype` (
-  `phenotype_id` string PRIMARY KEY COMMENT 'Identifier for phenotype (primary key), automatically generated as part of data deposition',
+  `phenotype_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated phenotype key',
+  `phenotype_id` string UNIQUE COMMENT 'Identifier for phenotype (unique external identifier), automatically generated as part of data deposition',
   `participant_id` string COMMENT 'Subject/Participant Identifier',
   `term_id` string COMMENT 'The phenotype code, including prefix, from a defined ontology. The specific ontology used is named in the ontology field.',
   `presence` enumeration COMMENT 'Indicate whether the indicated phenotype is present in this participant.',
@@ -48,7 +117,8 @@ CREATE TABLE `phenotype` (
 );
 
 CREATE TABLE `genetic_findings` (
-  `genetic_findings_id` string PRIMARY KEY COMMENT 'Unique ID of this variant in this participant (primary key)',
+  `genetic_findings_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated genetic finding key',
+  `genetic_findings_id` string UNIQUE COMMENT 'Unique ID of this variant in this participant (unique external identifier)',
   `participant_id` string COMMENT 'Subject/Participant Identifier within project',
   `experiment_id` string COMMENT 'The experiment table and experiment ID(s) in which discovery was identified: experiment_table.id_in_table. Should correspond to an experiment_id in the DCC-generated experiment table.',
   `variant_type` enumeration,
@@ -91,7 +161,8 @@ CREATE TABLE `genetic_findings` (
 );
 
 CREATE TABLE `analyte` (
-  `analyte_id` string PRIMARY KEY COMMENT 'identifier for an analyte from a primary biosample source (primary key)',
+  `analyte_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated analyte key',
+  `analyte_id` string UNIQUE COMMENT 'identifier for an analyte from a primary biosample source (unique external identifier)',
   `participant_id` string,
   `analyte_type` enumeration COMMENT 'analyte derived from the primary_biosample. The actual thing you''re sticking into a machine to analyze/sequence',
   `analyte_processing_details` string COMMENT 'details about how the analyte or original biosample was extracted or processed',
@@ -110,14 +181,16 @@ CREATE TABLE `analyte` (
 );
 
 CREATE TABLE `experiment` (
-  `experiment_id` string PRIMARY KEY COMMENT 'table_name.experiment_id_in_table',
+  `experiment_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated experiment key',
+  `experiment_id` string UNIQUE COMMENT 'table_name.experiment_id_in_table',
   `table_name` enumeration,
   `id_in_table` string,
   `participant_id` string
 );
 
 CREATE TABLE `aligned` (
-  `aligned_id` string PRIMARY KEY COMMENT 'table_name.aligned_id_in_table',
+  `aligned_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated aligned file key',
+  `aligned_id` string UNIQUE COMMENT 'table_name.aligned_id_in_table',
   `table_name` enumeration,
   `id_in_table` string,
   `participant_id` string,
@@ -126,7 +199,8 @@ CREATE TABLE `aligned` (
 );
 
 CREATE TABLE `experiment_dna_short_read` (
-  `experiment_dna_short_read_id` string PRIMARY KEY COMMENT 'identifier for experiment_dna_short_read (primary key)',
+  `experiment_dna_short_read_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated DNA short-read experiment key',
+  `experiment_dna_short_read_id` string UNIQUE COMMENT 'identifier for experiment_dna_short_read (unique external identifier)',
   `analyte_id` string,
   `experiment_sample_id` string COMMENT 'identifier used in the data file (e.g. the SM tag in a BAM header, column headers for genotype fields in a VCF file)',
   `seq_library_prep_kit_method` string COMMENT 'Library prep kit used',
@@ -141,7 +215,8 @@ CREATE TABLE `experiment_dna_short_read` (
 );
 
 CREATE TABLE `aligned_dna_short_read` (
-  `aligned_dna_short_read_id` string PRIMARY KEY COMMENT 'identifier for aligned_short_read (primary key)',
+  `aligned_dna_short_read_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated DNA short-read alignment key',
+  `aligned_dna_short_read_id` string UNIQUE COMMENT 'identifier for aligned_short_read (unique external identifier)',
   `experiment_dna_short_read_id` string COMMENT 'identifier for experiment',
   `aligned_dna_short_read_file` string COMMENT 'name and path of file with aligned reads',
   `aligned_dna_short_read_index_file` string COMMENT 'name and path of index file corresponding to aligned reads file',
@@ -156,12 +231,14 @@ CREATE TABLE `aligned_dna_short_read` (
 );
 
 CREATE TABLE `aligned_dna_short_read_set` (
-  `aligned_dna_short_read_set_id` string PRIMARY KEY COMMENT 'identifier for a set of experiments (primary key)',
+  `aligned_dna_short_read_set_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated DNA short-read alignment set key',
+  `aligned_dna_short_read_set_id` string UNIQUE COMMENT 'identifier for a set of experiments (unique external identifier)',
   `aligned_dna_short_read_id` string COMMENT 'the aligned_dna_short_read_id of a short read file included in the variant callset. Should correspond to the id on the aligned_dna_short_read table.'
 );
 
 CREATE TABLE `called_variants_dna_short_read` (
-  `called_variants_dna_short_read_id` string PRIMARY KEY COMMENT 'unique key for table (anvil requirement)',
+  `called_variants_dna_short_read_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated DNA short-read variant call key',
+  `called_variants_dna_short_read_id` string UNIQUE COMMENT 'unique external identifier for table (anvil requirement)',
   `aligned_dna_short_read_set_id` string COMMENT 'identifier for experiment set',
   `called_variants_dna_file` string COMMENT 'name and path of the file with variant calls',
   `md5sum` string COMMENT 'md5 checksum for file',
@@ -172,7 +249,8 @@ CREATE TABLE `called_variants_dna_short_read` (
 );
 
 CREATE TABLE `experiment_rna_short_read` (
-  `experiment_rna_short_read_id` string PRIMARY KEY COMMENT 'identifier for experiment_rna_short_read (primary key)',
+  `experiment_rna_short_read_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated RNA short-read experiment key',
+  `experiment_rna_short_read_id` string UNIQUE COMMENT 'identifier for experiment_rna_short_read (unique external identifier)',
   `analyte_id` string,
   `experiment_sample_id` string COMMENT 'identifier used in the data file (e.g. the SM tag in a BAM header, column headers for genotype fields in a VCF file)',
   `rna_sample_type` enumeration COMMENT 'indicates whether experiment_rna_short_read_id corresponds to study sample with analyte_id or an isogenic cell line',
@@ -191,7 +269,8 @@ CREATE TABLE `experiment_rna_short_read` (
 );
 
 CREATE TABLE `aligned_rna_short_read` (
-  `aligned_rna_short_read_id` string PRIMARY KEY COMMENT 'identifier for aligned_short_read (primary key)',
+  `aligned_rna_short_read_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated RNA short-read alignment key',
+  `aligned_rna_short_read_id` string UNIQUE COMMENT 'identifier for aligned_short_read (unique external identifier)',
   `experiment_rna_short_read_id` string COMMENT 'identifier for experiment',
   `aligned_rna_short_read_file` string COMMENT 'name and path of file with aligned reads',
   `aligned_rna_short_read_index_file` string COMMENT 'name and path of index file corresponding to aligned reads file',
@@ -221,12 +300,14 @@ CREATE TABLE `aligned_rna_short_read` (
 );
 
 CREATE TABLE `aligned_rna_short_read_set` (
-  `aligned_rna_short_read_set_id` string PRIMARY KEY COMMENT 'identifier for a set of experiments (primary key)',
+  `aligned_rna_short_read_set_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated RNA short-read alignment set key',
+  `aligned_rna_short_read_set_id` string UNIQUE COMMENT 'identifier for a set of experiments (unique external identifier)',
   `aligned_rna_short_read_id` string
 );
 
 CREATE TABLE `readcounts_rna_short_read` (
-  `readcounts_rna_short_read_id` string PRIMARY KEY COMMENT 'unique key for table (anvil requirement)',
+  `readcounts_rna_short_read_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated RNA readcount key',
+  `readcounts_rna_short_read_id` string UNIQUE COMMENT 'unique external identifier for table (anvil requirement)',
   `aligned_rna_short_read_set_id` string COMMENT 'identifier for experiment set',
   `readcounts_rna_file` string COMMENT 'name and path of the file with readcounts/feature quantifications',
   `md5sum` string COMMENT 'md5 checksum for file',
@@ -239,7 +320,8 @@ CREATE TABLE `readcounts_rna_short_read` (
 );
 
 CREATE TABLE `experiment_nanopore` (
-  `experiment_nanopore_id` string PRIMARY KEY COMMENT 'identifier for experiment_nanopore (primary key)',
+  `experiment_nanopore_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated Nanopore experiment key',
+  `experiment_nanopore_id` string UNIQUE COMMENT 'identifier for experiment_nanopore (unique external identifier)',
   `analyte_id` string,
   `experiment_sample_id` string COMMENT 'identifier used in the data file (e.g. the SM tag in a BAM header, column headers for genotype fields in a VCF file)',
   `seq_library_prep_kit_method` enumeration COMMENT 'Library prep kit used',
@@ -255,7 +337,8 @@ CREATE TABLE `experiment_nanopore` (
 );
 
 CREATE TABLE `aligned_nanopore` (
-  `aligned_nanopore_id` string PRIMARY KEY COMMENT 'identifier for aligned_nanopore (primary key)',
+  `aligned_nanopore_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated Nanopore alignment key',
+  `aligned_nanopore_id` string UNIQUE COMMENT 'identifier for aligned_nanopore (unique external identifier)',
   `experiment_nanopore_id` string COMMENT 'identifier for experiment',
   `aligned_nanopore_file` string COMMENT 'name and path of file with aligned reads',
   `aligned_nanopore_index_file` string COMMENT 'name and path of index file corresponding to aligned reads file',
@@ -282,12 +365,14 @@ CREATE TABLE `aligned_nanopore` (
 );
 
 CREATE TABLE `aligned_nanopore_set` (
-  `aligned_nanopore_set_id` string PRIMARY KEY COMMENT 'identifier for a set of experiments (primary key)',
+  `aligned_nanopore_set_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated Nanopore alignment set key',
+  `aligned_nanopore_set_id` string UNIQUE COMMENT 'identifier for a set of experiments (unique external identifier)',
   `aligned_nanopore_id` string
 );
 
 CREATE TABLE `called_variants_nanopore` (
-  `called_variants_nanopore_id` string PRIMARY KEY COMMENT 'unique key for table (anvil requirement)',
+  `called_variants_nanopore_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated Nanopore variant call key',
+  `called_variants_nanopore_id` string UNIQUE COMMENT 'unique external identifier for table (anvil requirement)',
   `aligned_nanopore_set_id` string COMMENT 'identifier for experiment set',
   `called_variants_dna_file` string COMMENT 'name and path of the file with variant calls',
   `md5sum` string COMMENT 'md5 checksum for file',
@@ -298,7 +383,8 @@ CREATE TABLE `called_variants_nanopore` (
 );
 
 CREATE TABLE `experiment_pac_bio` (
-  `experiment_pac_bio_id` string PRIMARY KEY COMMENT 'identifier for experiment_short_read (primary key)',
+  `experiment_pac_bio_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated PacBio experiment key',
+  `experiment_pac_bio_id` string UNIQUE COMMENT 'identifier for experiment_short_read (unique external identifier)',
   `analyte_id` string,
   `experiment_sample_id` string COMMENT 'identifier used in the data file (e.g. the SM tag in a BAM header, column headers for genotype fields in a VCF file)',
   `seq_library_prep_kit_method` enumeration COMMENT 'Library prep kit used',
@@ -327,7 +413,8 @@ CREATE TABLE `experiment_pac_bio` (
 );
 
 CREATE TABLE `aligned_pac_bio` (
-  `aligned_pac_bio_id` string PRIMARY KEY COMMENT 'identifier for aligned_short_read (primary key)',
+  `aligned_pac_bio_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated PacBio alignment key',
+  `aligned_pac_bio_id` string UNIQUE COMMENT 'identifier for aligned_short_read (unique external identifier)',
   `experiment_pac_bio_id` string COMMENT 'identifier for experiment',
   `aligned_pac_bio_file` string COMMENT 'name and path of file with aligned reads',
   `aligned_pac_bio_index_file` string COMMENT 'name and path of index file corresponding to aligned reads file',
@@ -354,12 +441,14 @@ CREATE TABLE `aligned_pac_bio` (
 );
 
 CREATE TABLE `aligned_pac_bio_set` (
-  `aligned_pac_bio_set_id` string PRIMARY KEY COMMENT 'identifier for a set of experiments (primary key)',
+  `aligned_pac_bio_set_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated PacBio alignment set key',
+  `aligned_pac_bio_set_id` string UNIQUE COMMENT 'identifier for a set of experiments (unique external identifier)',
   `aligned_pac_bio_id` string
 );
 
 CREATE TABLE `called_variants_pac_bio` (
-  `called_variants_pac_bio_id` string PRIMARY KEY COMMENT 'unique key for table (anvil requirement)',
+  `called_variants_pac_bio_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated PacBio variant call key',
+  `called_variants_pac_bio_id` string UNIQUE COMMENT 'unique external identifier for table (anvil requirement)',
   `aligned_pac_bio_set_id` string COMMENT 'identifier for experiment set',
   `called_variants_dna_file` string COMMENT 'name and path of the file with variant calls',
   `md5sum` string COMMENT 'md5 checksum for file',
@@ -370,7 +459,8 @@ CREATE TABLE `called_variants_pac_bio` (
 );
 
 CREATE TABLE `experiment_atac_short_read` (
-  `experiment_atac_short_read_id` string PRIMARY KEY COMMENT 'identifier for experiment_atac_short_read (primary key)',
+  `experiment_atac_short_read_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated ATAC short-read experiment key',
+  `experiment_atac_short_read_id` string UNIQUE COMMENT 'identifier for experiment_atac_short_read (unique external identifier)',
   `analyte_id` string,
   `experiment_sample_id` string COMMENT 'identifier used in the data file (e.g. the SM tag in a BAM header, column headers for genotype fields in a VCF file)',
   `seq_library_prep_kit_method` string COMMENT 'Library prep kit used',
@@ -384,7 +474,8 @@ CREATE TABLE `experiment_atac_short_read` (
 );
 
 CREATE TABLE `aligned_atac_short_read` (
-  `aligned_atac_short_read_id` string PRIMARY KEY COMMENT 'identifier for aligned_atac_short_read (primary key)',
+  `aligned_atac_short_read_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated ATAC short-read alignment key',
+  `aligned_atac_short_read_id` string UNIQUE COMMENT 'identifier for aligned_atac_short_read (unique external identifier)',
   `experiment_atac_short_read_id` string COMMENT 'identifier for experiment',
   `aligned_atac_short_read_file` string COMMENT 'name and path of file with aligned reads',
   `aligned_atac_short_read_index_file` string COMMENT 'name and path of index file corresponding to aligned reads file',
@@ -403,7 +494,8 @@ CREATE TABLE `aligned_atac_short_read` (
 );
 
 CREATE TABLE `called_peaks_atac_short_read` (
-  `called_peaks_atac_short_read_id` string PRIMARY KEY COMMENT 'unique key for table (anvil requirement)',
+  `called_peaks_atac_short_read_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated ATAC peak call key',
+  `called_peaks_atac_short_read_id` string UNIQUE COMMENT 'unique external identifier for table (anvil requirement)',
   `aligned_atac_short_read_id` string COMMENT 'identifier for aligned ATAC-seq data',
   `called_peaks_file` string COMMENT 'name and path of the bed file with open chromatin peaks after QC filtering',
   `peaks_md5sum` string COMMENT 'md5 checksum for called_peaks_file',
@@ -424,7 +516,8 @@ CREATE TABLE `allele_specific_atac_short_read` (
 );
 
 CREATE TABLE `experiment_optical_mapping` (
-  `experiment_optical_mapping_id` string PRIMARY KEY COMMENT 'identifier for experiment_optical_mapping (primary key)',
+  `experiment_optical_mapping_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated optical mapping experiment key',
+  `experiment_optical_mapping_id` string UNIQUE COMMENT 'identifier for experiment_optical_mapping (unique external identifier)',
   `analyte_id` string,
   `experiment_sample_id` string COMMENT 'identifier used in the data file (e.g. the SM tag in a BAM header, column headers for genotype fields in a VCF file)',
   `isolation_protocol` string COMMENT 'Name of DNA Isolation kit used',
@@ -435,7 +528,8 @@ CREATE TABLE `experiment_optical_mapping` (
 );
 
 CREATE TABLE `molecule_file_optical_mapping` (
-  `molecule_file_optical_mapping_id` string PRIMARY KEY COMMENT 'identifier for molecule_file_optical_mapping (primary key)',
+  `molecule_file_optical_mapping_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated optical mapping molecule file key',
+  `molecule_file_optical_mapping_id` string UNIQUE COMMENT 'identifier for molecule_file_optical_mapping (unique external identifier)',
   `experiment_optical_mapping_id` string COMMENT 'identifier for experiment',
   `bnx_file` string COMMENT 'name and path of raw molecule file',
   `bnx_version` float COMMENT 'Molecule file version',
@@ -456,7 +550,8 @@ CREATE TABLE `molecule_file_optical_mapping` (
 );
 
 CREATE TABLE `aligned_molecules_optical_mapping` (
-  `aligned_molecules_optical_mapping_id` string PRIMARY KEY COMMENT 'identifier for aligned_molecules_optical_mapping (primary key)',
+  `aligned_molecules_optical_mapping_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated aligned molecule key',
+  `aligned_molecules_optical_mapping_id` string UNIQUE COMMENT 'identifier for aligned_molecules_optical_mapping (unique external identifier)',
   `molecule_file_optical_mapping_id` string COMMENT 'identifier for molecule file used for this alignment',
   `aligned_molecules_optical_mapping_file` string COMMENT 'Location of molecule to reference alignment file',
   `aligned_molecules_optical_mapping_index_file` string COMMENT 'Location of molecule to reference alignment index file',
@@ -476,7 +571,8 @@ CREATE TABLE `aligned_molecules_optical_mapping` (
 );
 
 CREATE TABLE `aligned_assembly_optical_mapping` (
-  `aligned_assembly_optical_mapping_id` string PRIMARY KEY COMMENT 'identifier for aligned_assembly_optical_mapping (primary key)',
+  `aligned_assembly_optical_mapping_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated aligned assembly key',
+  `aligned_assembly_optical_mapping_id` string UNIQUE COMMENT 'identifier for aligned_assembly_optical_mapping (unique external identifier)',
   `molecule_file_optical_mapping_id` string COMMENT 'identifier for molecule file used for this alignment',
   `reference_assembly` enumeration,
   `reference_assembly_uri` string,
@@ -495,18 +591,21 @@ CREATE TABLE `aligned_assembly_optical_mapping` (
 );
 
 CREATE TABLE `aligned_optical_mapping` (
-  `aligned_optical_mapping_id` string PRIMARY KEY COMMENT 'identifier for a set of experiments (primary key)',
+  `aligned_optical_mapping_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated optical mapping alignment key',
+  `aligned_optical_mapping_id` string UNIQUE COMMENT 'identifier for a set of experiments (unique external identifier)',
   `aligned_assembly_optical_mapping_id` string,
   `aligned_molecules_optical_mapping_id` string
 );
 
 CREATE TABLE `aligned_optical_mapping_set` (
-  `aligned_optical_mapping_set_id` string PRIMARY KEY COMMENT 'identifier for a set of experiments (primary key)',
+  `aligned_optical_mapping_set_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated optical mapping alignment set key',
+  `aligned_optical_mapping_set_id` string UNIQUE COMMENT 'identifier for a set of experiments (unique external identifier)',
   `aligned_optical_mapping_id` string
 );
 
 CREATE TABLE `called_variants_optical_mapping` (
-  `called_variants_optical_mapping_id` string PRIMARY KEY COMMENT 'unique key for table (anvil requirement)',
+  `called_variants_optical_mapping_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated optical mapping variant call key',
+  `called_variants_optical_mapping_id` string UNIQUE COMMENT 'unique external identifier for table (anvil requirement)',
   `aligned_optical_mapping_set_id` string COMMENT 'identifier for set',
   `optical_mapping_vcf_file` string COMMENT 'name and path of the file with optical mapping variant calls',
   `md5sum` string COMMENT 'md5 checksum for vcf file',
@@ -517,7 +616,8 @@ CREATE TABLE `called_variants_optical_mapping` (
 );
 
 CREATE TABLE `experiment_iclr` (
-  `experiment_iclr_id` string PRIMARY KEY COMMENT 'identifier for experiment_iclr (primary key)',
+  `experiment_iclr_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated ICLR experiment key',
+  `experiment_iclr_id` string UNIQUE COMMENT 'identifier for experiment_iclr (unique external identifier)',
   `analyte_id` string,
   `experiment_sample_id` string COMMENT 'identifier used in the data file (e.g. the SM tag in a BAM header, column headers for genotype fields in a VCF file)',
   `seq_library_prep_kit_method` string COMMENT 'Library prep kit used',
@@ -532,7 +632,8 @@ CREATE TABLE `experiment_iclr` (
 );
 
 CREATE TABLE `aligned_iclr` (
-  `aligned_iclr_id` string PRIMARY KEY COMMENT 'identifier for aligned_iclr (primary key)',
+  `aligned_iclr_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated ICLR alignment key',
+  `aligned_iclr_id` string UNIQUE COMMENT 'identifier for aligned_iclr (unique external identifier)',
   `experiment_iclr_id` string COMMENT 'identifier for experiment',
   `aligned_iclr_file` string COMMENT 'name and path of file with aligned reads',
   `aligned_iclr_index_file` string COMMENT 'name and path of index file corresponding to aligned reads file',
@@ -547,12 +648,14 @@ CREATE TABLE `aligned_iclr` (
 );
 
 CREATE TABLE `aligned_iclr_set` (
-  `aligned_iclr_set_id` string PRIMARY KEY COMMENT 'identifier for a set of experiments (primary key)',
+  `aligned_iclr_set_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated ICLR alignment set key',
+  `aligned_iclr_set_id` string UNIQUE COMMENT 'identifier for a set of experiments (unique external identifier)',
   `aligned_iclr_id` string
 );
 
 CREATE TABLE `called_variants_iclr` (
-  `called_variants_iclr_id` string PRIMARY KEY COMMENT 'unique key for table (anvil requirement)',
+  `called_variants_iclr_pk` integer AUTO_INCREMENT PRIMARY KEY COMMENT 'Database-generated ICLR variant call key',
+  `called_variants_iclr_id` string UNIQUE COMMENT 'unique external identifier for table (anvil requirement)',
   `aligned_iclr_set_id` string COMMENT 'identifier for experiment set',
   `called_variants_dna_file` string COMMENT 'name and path of the file with variant calls',
   `md5sum` string COMMENT 'md5 checksum for file',
